@@ -18,6 +18,7 @@ class Club(models.Model):
 class Fun(models.Model):
     name = models.CharField(max_length=15)
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
+    nation = models.ForeignKey(Country, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -35,6 +36,8 @@ sub = Club.objects.filter(country=OuterRef('pk')).annotate(t=Count('fun')).filte
 Country.objects.annotate(r=Subquery(sub))
 
 # - количество фанатов, которые болеют за клуб с самым длинным названием
+sub = Club.objects.filter(country=OuterRef('pk')).annotate(c=Length('title')).order_by('-c').values('pk')
+Country.objects.annotate(c=Count('club__fun', filter=Q(club=Subquery(sub[:1]))))
 
-
-#
+# - количество фанатов из той же страны, что и клуб
+Country.objects.filter(club__fun__nation=F('pk')).annotate(Count('club__fun'))
