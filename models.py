@@ -21,3 +21,16 @@ class Fun(models.Model):
 
     def __str__(self):
         return self.name
+
+# составить запрос:
+# Список стран, аннотированный полем
+
+
+# - количество фанатов, которые болеют за клубы, у которых вместимость арены больше 50к
+Country.objects.filter(club__bulk_arena__gt=50).annotate(total=Count('club__fun'))
+
+
+# - количество команд, за которых болеет более 3 человек
+
+#
+#
