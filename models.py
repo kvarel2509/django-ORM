@@ -31,6 +31,10 @@ Country.objects.filter(club__bulk_arena__gt=50).annotate(total=Count('club__fun'
 
 
 # - количество команд, за которых болеет более 3 человек
+sub = Club.objects.filter(country=OuterRef('pk')).annotate(t=Count('fun')).filter(t__gt=3).annotate(l=Count('title', distinct=True)).values('l')
+Country.objects.annotate(r=Subquery(sub))
 
-#
+# - количество фанатов, которые болеют за клуб с самым длинным названием
+
+
 #
